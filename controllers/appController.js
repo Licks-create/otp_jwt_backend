@@ -35,7 +35,8 @@ export async function verifyUser(req,res,next){
 export async function register(req,res,next)
 {
     try {
-        const {username,password,profile,email,mobile} = req.body
+        const {username="user",password,profile="profilepic",email,mobile=91} = req.body
+        
         // console.log({username,password,mobile,email,profile});
         
         if(!password||!email){
@@ -91,21 +92,22 @@ export async function register(req,res,next)
 
 export async function login(req,res,next)
 {
-    const {username,password} = req.body
+    const {email,password} = req.body
 
-    if(!username||!password){
+    if(!email||!password){
         return res.status(401).json({
             message:"All fields are required!"
         })
     }
 
     try {
-        const user=await userModel.findOne({username})
+        const user=await userModel.findOne({email})
 
         let passwodCheck =false;
 
         if(user){
         const {username,profile,email,mobile}=user
+        
 
         passwodCheck=await bcrypt.compare(password,user.password)
          if(passwodCheck){
@@ -173,13 +175,13 @@ export async function login(req,res,next)
 export async function getUser(req,res,next)
 {
     try {
-        const {username}=req.params
-        const obj = await userModel.find({username}).select("-password")
+        const {email}=req.params
+        const obj = await userModel.find({email}).select("-password")
         
         if(obj?.length)
         return res.status(201).json({data:obj})
 
-        return res.json({message:"username "+username+" not found!"})
+        return res.json({message:"useremail "+email+" not found!"})
     } catch (error) {
         next(new Error(error))
     }
@@ -207,6 +209,7 @@ export async function updateUser(req,res,next)
                 return res.status(401).json({message:"User not present"}) 
         } 
         const user=await userModel.updateOne({email},{location, age ,work_details})
+        return res.status(201).json({message:"user updated",user})
     } catch (error) {
         next(new Error(error))   
     }
@@ -338,3 +341,15 @@ export async function resetPassword(req,res)
 }
 
 
+export const deleteALL=async(req,res,next)=>{
+    const {password}=req.body
+    if(password==="vivek")
+    try {
+        const de=await userModel.deleteMany();
+        return res.status(201).json({message:"deleted all"})
+    } catch (error) {
+        next(new Error(error))
+    }
+    else
+    next(new Error({message:"NOT AITHORIZED"}))
+}

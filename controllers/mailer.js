@@ -9,7 +9,7 @@ import otpGenerator from "otp-generator"
 
 export const registerMail = async (req, res, next) => {
   const { username, email, text, subject } = req.body;
-  console.log(req.app.locals.OTP)
+  // console.log(req.app.locals.OTP)
   // console.log({username,email,text,subject});
   if (!email) {
     return res.status(401).json({ message: "email required!" });

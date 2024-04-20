@@ -11,7 +11,7 @@ export async function verifyToken(req, res, next) {
   const token = authHeader.split(" ")[1];
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-    console.log({ decoded },err);
+    // console.log({ decoded },err);
     if (err) return res.status(403).json({ message: "Forbidden" });
     req.user = decoded.userinfo.username;
     req.roles = decoded.userinfo.roles;
