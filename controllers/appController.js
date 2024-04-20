@@ -10,18 +10,19 @@ import otpGenerator from "otp-generator"
 export async function verifyUser(req,res,next){
 
     
-    const {username} = req.method=='GET'?req.query:req.body
+    const {email} = req.method=='GET'?req.query:req.body
 
-    if(!username){
-        return res.status(403).json({message:"username required!"})
+
+    if(!email){
+        return res.status(403).json({message:"useremail required!"})
     }
 
-    // check existance username
-    const existingUsername=await userModel.findOne({username});
+    // check existance useremail
+    const existingUsername=await userModel.findOne({email});
     // console.log(existingUsername); 
     
     if(!existingUsername){
-        return res.status(401).json({message:"username not present"})
+        return res.status(401).json({message:"email not present"})
     } 
     next()
 } 
@@ -192,6 +193,27 @@ export async function getUser(req,res,next)
 
 export async function updateUser(req,res,next)
 {
+
+    // update by email (after otp varifcation)
+    if(req.body){
+        const {email,location, age ,work_details} = req.body
+        if(!email){ 
+            return res.status(401).json({message:"email is required"})  
+        }
+        try {
+            
+            const emailCheck=await userModel.findOne({email});
+            if(!emailCheck){
+                return res.status(401).json({message:"User not present"}) 
+        } 
+        const user=await userModel.updateOne({email},{location, age ,work_details})
+    } catch (error) {
+        next(new Error(error))   
+    }
+    
+}
+else
+// update by userID
     try {
         // const id=req.query.id;
         const {id}=req.user.userinfo;
@@ -234,13 +256,14 @@ export async function updateUser(req,res,next)
 
 
 // reset password
-export async function generateOTP(req,res){
+export async function generateOTP(req,res,next){
 
-    
     req.app.locals.OTP=otpGenerator.generate(6,{lowerCaseAlphabets:false,upperCaseAlphabets:false,specialChars:false})
     
     // console.log(req.app.locals);
-    res.status(201).json({OTP:req.app.locals.OTP,message:"OTP Sent to User's mail"})
+    
+    next()
+   
 }
 
 
@@ -248,13 +271,13 @@ export async function generateOTP(req,res){
 
 export async function verifyOTP(req,res)
 {
-    const {otp}=req.query;
-    // console.log("req.app.locals.OTP",req.app.locals.OTP,otp);
+    const {otp} = req.method=='GET'?req.query:req.body
+    console.log("req.app.locals.OTP",req.app.locals.OTP,otp);
     
     if(parseInt(req.app.locals.OTP)===parseInt(otp)){
         req.app.locals.OTP=null,//reset the otp
         req.app.locals.reserSession=true;//start session for reset otp
-        return res.status(201).json({message:"varified successfully"})
+        return res.status(201).json({message:"OTP varified successfully"})
     }
     return res.status(401).json({message:"invalid otp"})
 }

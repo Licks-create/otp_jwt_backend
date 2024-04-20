@@ -27,6 +27,14 @@ export const userschema=mongoose.Schema({
     },
     profile:{
         type:String,
+    },
+    location:{
+        type:String,
+        
+    }, age:{
+        
+    } ,work_details:{
+        
     }
 })
 

@@ -1,7 +1,7 @@
 import express, {Router} from "express"
 import * as controller from "../controllers/appController.js"
 import { verifyToken } from "../middleware/verifyToken.js"
-import { registerMail } from "../controllers/mailer.js"
+import { registerMail, sendOTP } from "../controllers/mailer.js"
 import Auth ,{localVariables}from "../middleware/auth.js"
 
 
@@ -13,9 +13,10 @@ const app=express()
 // post
 router.route('/register').post(controller.register)//register user
 router.route('/registerMail').post(registerMail)//send Mail
-router.route('/generateOTP').get(controller.verifyUser,localVariables,controller.generateOTP)//generate otp
+router.route('/generateOTP').post(controller.verifyUser,localVariables,controller.generateOTP,sendOTP)//generate otp
+router.route('/verifyOTP').post(controller.verifyUser,controller.verifyOTP)//verify generated otp
 router.route('/login').post(controller.login)// login in app
-
+router.route('/updateUser').put(controller.updateUser)
 
  
 // verifytoken 
