@@ -26,28 +26,39 @@ This project is aimed at developing a secure user registration and authenticatio
 - **Response:** 
   - Success: Status 200 OK
   - Error: Status 400 Bad Request
-
+    
 ### 2. Send OTP for Email Verification
-- **URL:** `/api/sendotp`
+- **URL:** `/api/generateOTP`
 - **Method:** POST
 - **Request Body:**
   - email (string): User's email address
+  - password (string): User's password
 - **Response:** 
   - Success: Status 200 OK
   - Error: Status 400 Bad Request
 
-### 3. Validate User Account and Update Information
-- **URL:** `/api/validate/:userId`
+### 3.1 Validate User Account
+- **URL:** `/api/verifyOTP`
+- **Method:** POST
+- **Request Body:**
+  - email (string): User's email address
+  - otp (string): One-time password sent to the user's email
+- **Response:** 
+  - Success: Status 200 OK
+  - Error: Status 400 Bad Request
+    
+### 3.2 Update Information
+- **URL:** `/api/updateUser`
 - **Method:** PUT
 - **Request Body:**
-  - otp (string): One-time password sent to the user's email
-  - location (string): User's location
-  - age (integer): User's age
-  - work_details (string): User's work details
+  - email (string): User's email address
+  - location (string)
+  - age (string)
+  - work_Details (string)
 - **Response:** 
   - Success: Status 200 OK
   - Error: Status 400 Bad Request
-
+    
 ### 4. User Login and JWT Token Generation
 - **URL:** `/api/login`
 - **Method:** POST
@@ -57,6 +68,8 @@ This project is aimed at developing a secure user registration and authenticatio
 - **Response:** 
   - Success: JWT token with Status 200 OK
   - Error: Status 401 Unauthorized
+
+### Paste the token in header as Baerer token i.e 'Bearer token'
 
 ### 5. Retrieve User Information
 - **URL:** `/api/userinfo`
