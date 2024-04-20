@@ -11,7 +11,6 @@ export async function verifyUser(req,res,next){
 
     
     const {username} = req.method=='GET'?req.query:req.body
-    // console.log({username});
 
     if(!username){
         return res.status(403).json({message:"username required!"})
@@ -38,16 +37,16 @@ export async function register(req,res,next)
         const {username,password,profile,email,mobile} = req.body
         // console.log({username,password,mobile,email,profile});
         
-        if(!username||!password||!email||!mobile){
+        if(!password||!email){
             return res.status(403).json({message:"All fields are required!"})
         }
 
         // check existance username
-        const existingUsername=await userModel.findOne({username});
+        const existingUsername=await userModel.findOne({email});
         // console.log(existingUsername); 
         
         if(existingUsername){
-            return res.status(401).json({message:"username already present"})
+            return res.status(401).json({message:"email already in use"})
         } 
 
         // check existance email 
@@ -241,7 +240,7 @@ export async function generateOTP(req,res){
     req.app.locals.OTP=otpGenerator.generate(6,{lowerCaseAlphabets:false,upperCaseAlphabets:false,specialChars:false})
     
     // console.log(req.app.locals);
-    res.status(201).json({OTP:req.app.locals.OTP})
+    res.status(201).json({OTP:req.app.locals.OTP,message:"OTP Sent to User's mail"})
 }
 
 

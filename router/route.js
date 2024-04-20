@@ -13,9 +13,7 @@ const app=express()
 // post
 router.route('/register').post(controller.register)//register user
 router.route('/registerMail').post(registerMail)//send Mail
-router.route('/authenticate').post(controller.verifyUser,async(req,res,next)=>{
-    res.status(200).json('authenticate routes')
-})//authenticate User
+router.route('/generateOTP').get(controller.verifyUser,localVariables,controller.generateOTP)//generate otp
 router.route('/login').post(controller.login)// login in app
 
 
